@@ -1,3 +1,4 @@
+import os
 import socket
 from hashlib import sha256
 
@@ -41,47 +42,64 @@ def merkle_tree(chunks):
     root_hash = list(tree.keys())
     return root_hash[-1]
 
+
 def main():
     print("Server is starting...")
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.bind(ADDR)
     server.listen()
     print("Server is listening")
+    
 
     while True:
         conn,  addr = server.accept()
         print(F"New connection {addr} connected.")
+        transfertype = conn.recv(SIZE).decode(FORMAT)
+        if transfertype=="Upload":
+            filename = conn.recv(SIZE).decode(FORMAT)
+            print(f"Filename: {filename} received")
+            file = open("Recieved data/"+ filename, 'w')
+            conn.send("filename recieved".encode(FORMAT))
 
-        filename = conn.recv(SIZE).decode(FORMAT)
-        print(f"Filename: {filename} received")
-        file = open("Recieved data/"+ filename, 'w')
-        conn.send("filename recieved".encode(FORMAT))
+            data = conn.recv(SIZE).decode(FORMAT)
+            hash_val = conn.recv(SIZE).decode(FORMAT)
+            print(f"Hash value {hash_val}")
 
-        data = conn.recv(SIZE).decode(FORMAT)
-        hash_val = conn.recv(SIZE).decode(FORMAT)
-        print(f"Hash value {hash_val}")
+            ch = chunk_file(filename, 1024)
+            hash2 = merkle_tree(ch)
+            print(f"Hash value: {hash2}")
 
-        ch = chunk_file(filename, 1024)
-        hash2 = merkle_tree(ch)
-        print(f"Hash value: {hash2}")
+            if hash2 == hash_val:
+                conn.send("True".encode(FORMAT))
+                print('Your data is in good hands')
+            else:
+                conn.send("False".encode(FORMAT))
+                print('Your data is not in good hands')
 
-        if hash2 == hash_val:
-            conn.send("True".encode(FORMAT))
-            print('Your data is in good hands')
-        else:
-            conn.send("False".encode(FORMAT))
-            print('Your data is not in good hands')
+            print(f"File Data Recieved")
+            file.write(data)
+            conn.send("File data recieved".encode(FORMAT))
+            file.close()
 
-        print(f"File Data Recieved")
-        file.write(data)
-        conn.send("File data recieved".encode(FORMAT))
+        elif transfertype=="Download":
+            filename = conn.recv(SIZE).decode(FORMAT)
+            print(f"Filename: {filename} received")
+            if os.path.exists("Recieved data/" + filename):
+                conn.send("Exist".encode(FORMAT))
+                file = open("Recieved data/"+ filename, 'r')
+                data = file.read()
+                conn.send(data.encode())
+                file.close()
 
-        
-            
-        file.close()
+                ch = chunk_file("Recieved data/"+filename, 1024)
+                hash1 = merkle_tree(ch)
+                print(f"Hash value: {hash1}")
+                conn.send(hash1.encode(FORMAT))
+            else:
+                conn.send("Not exist".encode(FORMAT))
         conn.close()
-        print(f"Disconnected {addr} ")
 
+        print(f"Disconnected {addr} ")
 
 if __name__ == '__main__':
     main()

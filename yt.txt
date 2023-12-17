@@ -1,0 +1,14 @@
+st.text_input
+Streamlit Version
+v1.29.0
+Display a single-line text input widget.
+
+Function signature[source]
+st.text_input(label, value="", max_chars=None, key=None, type="default", help=None, autocomplete=None, on_change=None, args=None, kwargs=None, *, placeholder=None, disabled=False, label_visibility="visible")
+
+Parameters
+label (str)
+
+A short label explaining to the user what this input is for. The label can optionally contain Markdown and supports the following elements: Bold, Italics, Strikethroughs, Inline Code, Emojis, and Links.
+
+This also supports:

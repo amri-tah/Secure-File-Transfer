@@ -1,5 +1,6 @@
 from hashlib import sha256
 import socket
+import os
 import streamlit as st
 
 def chunk_file(file_path, chunk_size):
@@ -46,6 +47,7 @@ def upload_file(filename, ip):
     try:
         client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         client.connect(ADDR)
+        client.send("Upload".encode())
     except:
         st.error("Connection Failure! Check if the server is active.")
         return
@@ -63,7 +65,7 @@ def upload_file(filename, ip):
 
     secure = client.recv(SIZE).decode(FORMAT)
     if secure == "True":
-        st.success("Data Integrity assured!")
+        st.success("Data Integrity assured!", icon="✅")
     else:
         st.error("Data might be lost.")
     
@@ -76,6 +78,11 @@ def upload_file(filename, ip):
     return False
 
 def download_file(filename, ip):
+    # Step 1: get the file data
+    # Step 2: get the hash value 
+    # Step 3: generate hash for file data
+    # Step 4: compare
+
     IP = socket.gethostbyname(socket.gethostname())
     PORT = 4455
     ADDR = (IP, PORT)
@@ -85,29 +92,40 @@ def download_file(filename, ip):
     try:
         client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         client.connect(ADDR)
+        client.send("Download".encode())
     except:
         st.error("Connection Failure! Check if the server is active.")
         return
-
-    file = open(filename, 'r')
-    data = file.read()
+    
     client.send(filename.encode())
-    msg = client.recv(SIZE).decode(FORMAT)
-    print(f"Server: {msg}")
-    client.sendall(data.encode(FORMAT))
-    ch = chunk_file(filename, 1024)
-    hash1 = merkle_tree(ch)
-    print(f"Hash value: {hash1}")
-    client.sendall(hash1.encode(FORMAT))
-
-    msg = client.recv(SIZE).decode(FORMAT)
-    print(f"Server: {msg}")
+    exist = client.recv(SIZE).decode(FORMAT)
+    
+    if exist == "Not exist":
+        st.error("No such file exists in the server", icon="🚨")
+        return
+    
+    file = open("Downloaded/"+ filename, 'w')
+    data = client.recv(SIZE).decode(FORMAT)
+    file.write(data)
     file.close()
+
+    hash_val = client.recv(SIZE).decode(FORMAT)
+    print(f"Hash value {hash_val}")
+
     client.close()
 
-    if msg == "File data recieved":
+    ch = chunk_file("Downloaded/"+ filename, 1024)
+    hash2 = merkle_tree(ch)
+    print(f"Hash value: {hash2}")
+
+    if hash2 == hash_val:
+        st.success("Data Integrity assured!", icon="✅")
         return True
-    return False
+    else:
+        st.error("Data might be lost", icon="🚨")
+        return False
+
+
 
 if __name__ == "__main__":
     st.title("Secure File Transfer System using Merkle Tree")
@@ -141,7 +159,3 @@ if __name__ == "__main__":
 
         else:
             st.error(f'Enter a filename to be downloaded first!', icon="🚨")
-
-
-
-
