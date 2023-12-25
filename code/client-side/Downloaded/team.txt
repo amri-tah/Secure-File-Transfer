@@ -1,0 +1,9 @@
+22AIE203 - DSA2 
+Merkle Tree Project
+
+By
+- KL Amritha Nandini (CB.EN.U4AIE22126)
+- SP Saran Dharshan (CB.EN.U4AIE22045)
+
+Objective:
+To develop a secure file transfer system that utilizes a Merkle tree to ensure file integrity during transmission. The system should encrypt the file upon upload to the server and employ the Merkle tree to verify the file's authenticity upon download.
