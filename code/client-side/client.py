@@ -208,7 +208,6 @@ def download_file(filename, ip):
 if __name__ == "__main__":
     st.title("Secure File Transfer System")
     st.subheader("Encrypt and Verify in a Flash ⚡")
-    st.write("Merkle Tree Project by Amritha and Saran")
     
     # text input for IP address of the server
     ip = st.text_input("Enter IP address of the server: ")
