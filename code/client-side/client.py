@@ -49,12 +49,13 @@ def merkle_tree(chunks):
     mid = len(chunks) // 2
     left_hash = merkle_tree(chunks[:mid])
     right_hash = merkle_tree(chunks[mid:])
-    print(f"Left Chunk:{chunks[:mid]}, Left Hash: {left_hash}\nRight Chunk:{chunks[mid:]}, Right Hash: {right_hash}\n")
 
     return sha256(left_hash.encode() + right_hash.encode()).hexdigest()
 
 def show_files(ip):
-    IP = socket.gethostbyname(socket.gethostname()) # change the value to ip while connecting to server on another system
+    IP = socket.gethostbyname(socket.gethostname()) 
+    # change the value to input ip while connecting to server on another system
+    # IP = ip
     ADDR = (IP, PORT)
 
     try:
@@ -82,7 +83,9 @@ def show_files(ip):
 
 # Function to upload a file to the server
 def upload_file(filename, ip):
-    IP = socket.gethostbyname(socket.gethostname()) # change the value to ip while connecting to server on another system
+    IP = socket.gethostbyname(socket.gethostname()) 
+    # change the value to input ip while connecting to server on another system
+    # IP = ip
     ADDR = (IP, PORT)
 
     try:
@@ -140,7 +143,9 @@ def upload_file(filename, ip):
 
 # Function to download a file from the server
 def download_file(filename, ip):
-    IP = socket.gethostbyname(socket.gethostname()) # change the value to ip while connecting to server on another system
+    IP = socket.gethostbyname(socket.gethostname()) 
+    # change the value to input ip while connecting to server on another system
+    # IP = ip
     ADDR = (IP, PORT)
 
     try:
