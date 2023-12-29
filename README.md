@@ -3,7 +3,7 @@
 This repository contains a secure file transfer system implemented in Python, providing a reliable and encrypted method for uploading, downloading, and displaying files between a client and server. The system incorporates Fernet symmetric encryption for secure data transmission and uses Merkle trees for integrity verification.
 
 
-![no-files](https://github.com/amri-tah/Secure-File-Transfer/assets/126688534/15184999-0a52-4a02-a0e7-4035588c9265)
+![app](https://github.com/amri-tah/Secure-File-Transfer/assets/111682039/0d246345-3d0f-4ce6-b4ee-d69bd3a58d1b)
 
 
 ## Features
